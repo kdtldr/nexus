@@ -5,13 +5,20 @@ import Rail from '@/components/Rail';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
 import Canvas from '@/components/Canvas';
+import WorkspaceView from '@/components/WorkspaceView';
 import TweaksPanel from '@/components/TweaksPanel';
 import type { TweakState } from '@/components/TweaksPanel';
+
+type ActiveSession = {
+  prompt: string;
+  convId: string;
+};
 
 export default function Page() {
   const [activeConv, setActiveConv] = useState('c1');
   const [activeNav, setActiveNav] = useState('home');
   const [showTweaks, setShowTweaks] = useState(false);
+  const [session, setSession] = useState<ActiveSession | null>(null);
   const [tweaks, setTweaks] = useState<TweakState>({
     activeAgent: 'riley',
     showThread: false,
@@ -21,8 +28,21 @@ export default function Page() {
     approvalGate: true,
   });
 
+  // Sidebar auto-collapses when a session is active
+  const sidebarVisible = tweaks.showSidebar && !session;
+
   function handleSend(text: string) {
-    console.log('Send:', text);
+    setSession({ prompt: text, convId: `conv-${Date.now()}` });
+  }
+
+  function handleConvSelect(id: string) {
+    setActiveConv(id);
+    // Selecting a past conversation re-opens workspace
+    setSession({ prompt: 'Q2 LinkedIn narrative — draft 3', convId: id });
+  }
+
+  function handleCloseSession() {
+    setSession(null);
   }
 
   return (
@@ -30,16 +50,39 @@ export default function Page() {
       <div className="shell">
         <Rail
           activeNav={activeNav}
-          onNav={setActiveNav}
+          onNav={(id) => {
+            setActiveNav(id);
+            // Clicking home from workspace returns to canvas
+            if (id === 'home') setSession(null);
+          }}
           onTweaks={() => setShowTweaks(true)}
         />
-        {tweaks.showSidebar && (
-          <Sidebar activeConv={activeConv} onConv={setActiveConv} />
-        )}
+
+        <div
+          className={`sidebar${sidebarVisible ? '' : ' sidebar--collapsed'}`}
+          style={{ transition: 'width 220ms cubic-bezier(0.22,1,0.36,1)' }}
+        >
+          {sidebarVisible && (
+            <Sidebar activeConv={activeConv} onConv={handleConvSelect} />
+          )}
+        </div>
+
         <div className="main">
           <Topbar onTweaks={() => setShowTweaks(true)} />
+
           <div className="content">
-            <Canvas onSend={handleSend} />
+            {session ? (
+              <WorkspaceView
+                key={session.convId}
+                agentName="Riley"
+                agentColor="#FFAD00"
+                agentBg="#FFF3D1"
+                initialPrompt={session.prompt}
+                onClose={handleCloseSession}
+              />
+            ) : (
+              <Canvas onSend={handleSend} />
+            )}
           </div>
         </div>
       </div>
