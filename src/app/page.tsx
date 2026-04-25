@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Rail from '@/components/Rail';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
@@ -28,6 +28,16 @@ export default function Page() {
     approvalGate: true,
   });
 
+  // data-theme and data-density must be on <html> (= :root) for CSS vars to resolve
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.setAttribute('data-density', 'balanced');
+    return () => {
+      document.documentElement.removeAttribute('data-theme');
+      document.documentElement.removeAttribute('data-density');
+    };
+  }, []);
+
   function handleSend(text: string) {
     setSession({ prompt: text, convId: `conv-${Date.now()}` });
   }
@@ -41,17 +51,12 @@ export default function Page() {
     setSession(null);
   }
 
-  const mode = session ? 'chat' : 'home';
-  const wsState = session ? 'open' : 'closed';
-
   return (
     <>
       <div
         className="app"
-        data-theme="light"
-        data-density="balanced"
-        data-mode={mode}
-        data-ws={wsState}
+        data-mode={session ? 'chat' : 'home'}
+        data-ws={session ? 'open' : 'closed'}
       >
         <Rail
           activeNav={activeNav}
@@ -62,7 +67,10 @@ export default function Page() {
           onTweaks={() => setShowTweaks(true)}
         />
 
-        <Sidebar activeConv={activeConv} onConv={handleConvSelect} />
+        {/* Sidebar only visible on home — collapses when session is active */}
+        {!session && (
+          <Sidebar activeConv={activeConv} onConv={handleConvSelect} />
+        )}
 
         {session ? (
           <WorkspaceView
