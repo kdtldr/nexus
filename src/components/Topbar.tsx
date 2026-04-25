@@ -7,32 +7,37 @@ type TopbarProps = {
 export default function Topbar({ onTweaks }: TopbarProps) {
   return (
     <header className="topbar">
-      <div className="topbar__left">
-        <button className="topbar__icon-btn" title="Home">
-          <HomeIcon />
-        </button>
-        <span className="topbar__sep">/</span>
-        <span className="topbar__crumb">Nexus</span>
-        <span className="topbar__sep">/</span>
-        <span className="topbar__crumb topbar__crumb--active">Riley</span>
-      </div>
+      <nav className="crumbs">
+        <button className="home"><HomeIcon /></button>
+        <span className="sep">/</span>
+        <span>Nexus</span>
+        <span className="sep">/</span>
+        <strong>Riley</strong>
+      </nav>
 
-      <div className="topbar__right">
-        <div className="topbar__credits">
-          <span className="topbar__credits-dot" />
-          42,004 credits
-        </div>
-        <button className="topbar__icon-btn" title="Preview"><EyeIcon /></button>
-        <button className="topbar__icon-btn topbar__icon-btn--badge" title="Notifications"><BellIcon /><span className="topbar__badge">3</span></button>
-        <button className="topbar__icon-btn" title="Settings" onClick={onTweaks}><SettingsIcon /></button>
-        <div className="topbar__avatar">SS</div>
-      </div>
+      <div className="spacer" />
+
+      <button className="top-chip credits">
+        <span className="dot" />
+        27,284 credits
+      </button>
+      <button className="top-icon">
+        <EyeIcon />
+      </button>
+      <button className="top-icon" onClick={onTweaks}>
+        <BellIcon />
+        <span className="badge" />
+      </button>
+      <button className="top-icon" onClick={onTweaks}>
+        <SettingsIcon />
+      </button>
+      <div className="top-avatar">SS</div>
     </header>
   );
 }
 
 function HomeIcon() {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+  return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
 }
 function EyeIcon() {
   return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
