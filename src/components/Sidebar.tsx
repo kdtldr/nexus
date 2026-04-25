@@ -2,115 +2,141 @@
 
 import { useState } from 'react';
 
-export const AGENTS = [
-  { id: 'riley',  name: 'Riley',  role: 'Chief of Staff',        color: '#FFAD00', tint: '#FFF3D1', emoji: '✦' },
-  { id: 'pax',    name: 'Pax',    role: 'Research & Analysis',   color: '#14A38A', tint: '#D9F1EC', emoji: '◈' },
-  { id: 'nova',   name: 'Nova',   role: 'Creative Strategy',     color: '#8250C8', tint: '#EDE1F8', emoji: '◉' },
-  { id: 'quinn',  name: 'Quinn',  role: 'Data & Reporting',      color: '#3E82F7', tint: '#DCE9FD', emoji: '⬡' },
-  { id: 'leaf',   name: 'Leaf',   role: 'Ops & Automation',      color: '#4FA84A', tint: '#DFEFDE', emoji: '◆' },
-  { id: 'rose',   name: 'Rose',   role: 'Comms & Outreach',      color: '#E5526E', tint: '#FADFE4', emoji: '◇' },
-];
-
-const RECENT = [
-  { id: 't1', label: 'Q2 market analysis', meta: '2h', agentId: 'pax' },
-  { id: 't2', label: 'Email sequence draft', meta: '5h', agentId: 'rose' },
-  { id: 't3', label: 'Sprint planning deck', meta: 'Yesterday', agentId: 'riley' },
-  { id: 't4', label: 'Competitor teardown', meta: '2d', agentId: 'nova' },
-];
-
-type SidebarProps = {
-  activeAgent: string;
-  onAgent: (id: string) => void;
+const CONVERSATIONS = {
+  TODAY: [
+    { id: 'c1', title: 'Q2 LinkedIn narrative — draft 3', time: 'now', color: '#FFAD00' },
+    { id: 'c2', title: 'Repurpose blog → 4 Instagr...', time: '11:40a', color: '#4FA84A' },
+    { id: 'c3', title: 'YouTube thumbnail — prici...', time: '10:05a', color: '#3E82F7' },
+    { id: 'c4', title: 'Daily news brief · Apr 24', time: '8:00a', color: '#FFAD00' },
+  ],
+  YESTERDAY: [
+    { id: 'c5', title: 'Meme generator → 6 variati...', time: '4:20p', color: '#8250C8' },
+    { id: 'c6', title: 'Quote cards from podcast clip', time: '2:10p', color: '#14A38A' },
+    { id: 'c7', title: "Essay: why agentic marketi...", time: '11:02a', color: '#FFAD00' },
+    { id: 'c8', title: 'Facebook ad — spring promo', time: '9:15a', color: '#E5526E' },
+  ],
+  'EARLIER THIS WEEK': [
+    { id: 'c9', title: 'Weekly competitor scan', time: 'Tue', color: '#3E82F7' },
+    { id: 'c10', title: "Newsletter → 'Agentic is a verb'", time: 'Mon', color: '#FFAD00' },
+    { id: 'c11', title: 'Brand voice: softer, less hype', time: 'Mon', color: '#14A38A' },
+    { id: 'c12', title: 'Pricing page copy v2', time: 'Fri', color: '#8250C8' },
+  ],
 };
 
-export default function Sidebar({ activeAgent, onAgent }: SidebarProps) {
-  const [search, setSearch] = useState('');
+type SidebarProps = {
+  activeConv: string;
+  onConv: (id: string) => void;
+};
 
-  const filteredAgents = AGENTS.filter(a =>
-    a.name.toLowerCase().includes(search.toLowerCase()) ||
-    a.role.toLowerCase().includes(search.toLowerCase())
-  );
+export default function Sidebar({ activeConv, onConv }: SidebarProps) {
+  const [search, setSearch] = useState('');
 
   return (
     <aside className="sidebar">
-      <div className="sidebar__head">
-        <div className="sidebar__title">Workspace</div>
+      {/* Workspace selector */}
+      <div className="sidebar__workspace">
+        <div className="sidebar__workspace-logo">S</div>
+        <div className="sidebar__workspace-info">
+          <div className="sidebar__workspace-name">Simplified</div>
+          <div className="sidebar__workspace-plan">BUSINESS · 12 SEATS</div>
+        </div>
+        <ChevronIcon />
+      </div>
+
+      {/* Agent */}
+      <div className="sidebar__agent">
+        <div className="sidebar__agent-avatar">R</div>
+        <div className="sidebar__agent-info">
+          <div className="sidebar__agent-name">Riley</div>
+          <div className="sidebar__agent-role">CMO · Lead agent</div>
+        </div>
+        <ChevronIcon />
+      </div>
+
+      {/* New conversation */}
+      <div className="sidebar__new-wrap">
+        <button className="sidebar__new-btn">
+          <PlusIcon /> New conversation
+        </button>
+      </div>
+
+      {/* Search */}
+      <div className="sidebar__search-wrap">
         <div className="sidebar__search">
           <SearchIcon />
           <input
             type="text"
-            placeholder="Search agents, tasks…"
+            placeholder="Search conversations..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
+          <span className="sidebar__search-kbd">⌘K</span>
         </div>
       </div>
 
+      {/* Conversation list */}
       <div className="sidebar__body">
-        <div className="sidebar__group-label">Agents</div>
-        {filteredAgents.map(agent => (
-          <div
-            key={agent.id}
-            className={`sidebar__item${activeAgent === agent.id ? ' sidebar__item--active' : ''}`}
-            onClick={() => onAgent(agent.id)}
-          >
-            <div
-              className="sidebar__item-icon"
-              style={{ background: agent.tint, color: agent.color }}
-            >
-              {agent.emoji}
-            </div>
-            <span className="sidebar__item-label">{agent.name}</span>
-            <span className="sidebar__item-meta" style={{ color: agent.color, fontWeight: 600, fontSize: 10 }}>
-              {agent.role.split(' ')[0]}
-            </span>
-          </div>
-        ))}
-
-        {!search && (
-          <>
-            <div className="sidebar__group-label" style={{ marginTop: 8 }}>Recent</div>
-            {RECENT.map(item => {
-              const agent = AGENTS.find(a => a.id === item.agentId)!;
-              return (
-                <div key={item.id} className="sidebar__item" onClick={() => onAgent(item.agentId)}>
-                  <div
-                    className="sidebar__item-dot"
-                    style={{ background: agent.color }}
-                  />
-                  <span className="sidebar__item-label">{item.label}</span>
-                  <span className="sidebar__item-meta">{item.meta}</span>
+        {Object.entries(CONVERSATIONS).map(([group, convs]) => {
+          const filtered = convs.filter(c =>
+            !search || c.title.toLowerCase().includes(search.toLowerCase())
+          );
+          if (!filtered.length) return null;
+          return (
+            <div key={group}>
+              <div className="sidebar__group-label">{group}</div>
+              {filtered.map(conv => (
+                <div
+                  key={conv.id}
+                  className={`sidebar__conv${activeConv === conv.id ? ' sidebar__conv--active' : ''}`}
+                  onClick={() => onConv(conv.id)}
+                >
+                  <span className="sidebar__conv-dot" style={{ background: conv.color }} />
+                  <span className="sidebar__conv-title">{conv.title}</span>
+                  <span className="sidebar__conv-time">{conv.time}</span>
                 </div>
-              );
-            })}
-          </>
-        )}
+              ))}
+            </div>
+          );
+        })}
       </div>
 
+      {/* Footer */}
       <div className="sidebar__footer">
-        <button className="sidebar__new-btn">
-          <PlusIcon />
-          New Task
-        </button>
+        <div className="sidebar__credits">
+          <div className="sidebar__credits-label">
+            <span>27,284</span>
+            <span className="sidebar__credits-total"> / 40,000 credits</span>
+          </div>
+          <div className="sidebar__credits-bar">
+            <div className="sidebar__credits-fill" style={{ width: '68%' }} />
+          </div>
+        </div>
+        <button className="sidebar__upgrade">Upgrade</button>
       </div>
     </aside>
   );
 }
 
-function SearchIcon() {
+function ChevronIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8"/>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--ink-4)' }}>
+      <polyline points="6 9 12 15 18 9" />
     </svg>
   );
 }
 
 function PlusIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-      <line x1="12" y1="5" x2="12" y2="19"/>
-      <line x1="5" y1="12" x2="19" y2="12"/>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   );
 }

@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { AGENTS } from './Sidebar';
+const AGENTS = [
+  { id: 'riley', name: 'Riley', color: '#FFAD00', tint: '#FFF3D1', emoji: 'R' },
+  { id: 'pax',   name: 'Pax',   color: '#14A38A', tint: '#D9F1EC', emoji: 'P' },
+  { id: 'nova',  name: 'Nova',  color: '#8250C8', tint: '#EDE1F8', emoji: 'N' },
+  { id: 'quinn', name: 'Quinn', color: '#3E82F7', tint: '#DCE9FD', emoji: 'Q' },
+  { id: 'leaf',  name: 'Leaf',  color: '#4FA84A', tint: '#DFEFDE', emoji: 'L' },
+  { id: 'rose',  name: 'Rose',  color: '#E5526E', tint: '#FADFE4', emoji: 'O' },
+];
 
 type Message = {
   id: string;

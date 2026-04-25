@@ -1,6 +1,13 @@
 'use client';
 
-import { AGENTS } from './Sidebar';
+const AGENTS = [
+  { id: 'riley',  name: 'Riley',  role: 'CMO',        color: '#FFAD00', tint: '#FFF3D1', emoji: 'R' },
+  { id: 'pax',    name: 'Pax',    role: 'Research',   color: '#14A38A', tint: '#D9F1EC', emoji: 'P' },
+  { id: 'nova',   name: 'Nova',   role: 'Creative',   color: '#8250C8', tint: '#EDE1F8', emoji: 'N' },
+  { id: 'quinn',  name: 'Quinn',  role: 'Data',       color: '#3E82F7', tint: '#DCE9FD', emoji: 'Q' },
+  { id: 'leaf',   name: 'Leaf',   role: 'Ops',        color: '#4FA84A', tint: '#DFEFDE', emoji: 'L' },
+  { id: 'rose',   name: 'Rose',   role: 'Comms',      color: '#E5526E', tint: '#FADFE4', emoji: 'O' },
+];
 
 type TweakState = {
   activeAgent: string;
